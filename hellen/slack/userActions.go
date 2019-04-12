@@ -20,11 +20,13 @@ func OpenUserCommunication(userID string) string {
 
 	var openChannelResponse models.OpenChannelResponse
 	_ = json.NewDecoder(response.Body).Decode(&openChannelResponse)
-	return openChannelResponse.Id()
+	id := openChannelResponse.Id()
+	fmt.Println(id)
+	return id
 }
 
 func SendMessage(channelID string, message string) {
 	urlString := API + "/chat.postMessage?" + "token=" + BotToken + "&channel=" + channelID + "&text=" + url.QueryEscape(message)
-	forwardReq, _ := http.NewRequest(http.MethodPost, urlString, nil)
-	_, _ = http.DefaultClient.Do(forwardReq)
+	req, _ := http.NewRequest(http.MethodPost, urlString, nil)
+	_, _ = http.DefaultClient.Do(req)
 }

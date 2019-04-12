@@ -34,12 +34,12 @@ func InitServer(host string, port string, router *mux.Router) Server {
 }
 
 func (server *Server) Start() {
-	go server.run(server.router)
+	server.run(server.router)
 }
 
 func (server *Server) run(router *mux.Router) {
 	fmt.Println("Hellen is running on port : " + server.port)
-	var err = http.ListenAndServe(":"+server.port, router)
+	var err = http.ListenAndServe(":" + server.port, router)
 	if err != nil {
 		fmt.Println(err.Error())
 		os.Exit(1)

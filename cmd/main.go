@@ -7,11 +7,6 @@ import (
 	"os"
 )
 
-const (
-	DefaultHost = "localhost"
-	DefaultPort = "8080"
-)
-
 func main() {
 	requestHandler := handlers.NewRequestHandler()
 	serverRouter := router.New(requestHandler)

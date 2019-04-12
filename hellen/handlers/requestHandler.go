@@ -17,5 +17,5 @@ func NewRequestHandler() *RequestHandler {
 
 func (handler *RequestHandler) RootHandler(w http.ResponseWriter, r *http.Request) {
 	currentTime := time.Now().Format("2006-01-02 15:04:05")
-	io.WriteString(w, hellen.WelcomeMessage + hellen.TimeMessage + currentTime)
+	_, _ = io.WriteString(w, hellen.WelcomeMessage+hellen.TimeMessage+currentTime)
 }

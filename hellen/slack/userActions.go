@@ -6,10 +6,11 @@ import (
 	"github.com/ASV44/Hellen-StandUp/hellen/slack/models"
 	"net/http"
 	"net/url"
+	"os"
 )
 
 func OpenUserCommunication(userID string) string {
-	urlString := API + "/im.open?" + "token=" + BotToken + "&user=" + userID
+	urlString := API + "/im.open?" + "token=" + os.Getenv("BOT_TOKEN") + "&user=" + userID
 	forwardReq, _ := http.NewRequest(http.MethodGet, urlString, nil)
 	response, err := http.DefaultClient.Do(forwardReq)
 
@@ -26,7 +27,7 @@ func OpenUserCommunication(userID string) string {
 }
 
 func SendMessage(channelID string, message string) {
-	urlString := API + "/chat.postMessage?" + "token=" + BotToken + "&channel=" + channelID + "&text=" + url.QueryEscape(message)
+	urlString := API + "/chat.postMessage?" + "token=" + os.Getenv("BOT_TOKEN") + "&channel=" + channelID + "&text=" + url.QueryEscape(message)
 	req, _ := http.NewRequest(http.MethodPost, urlString, nil)
 	_, _ = http.DefaultClient.Do(req)
 }

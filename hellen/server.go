@@ -3,6 +3,8 @@ package hellen
 import (
 	"fmt"
 	"github.com/gorilla/mux"
+	"github.com/joho/godotenv"
+	"log"
 	"net/http"
 	"os"
 )
@@ -24,6 +26,11 @@ func InitServer(host string, port string, router *mux.Router) Server {
 	}
 	if port == "" {
 		port = DefaultPort
+	}
+
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
 	}
 
 	return Server{

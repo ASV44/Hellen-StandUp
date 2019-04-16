@@ -1,23 +1,32 @@
 package handlers
 
 import (
-	"fmt"
 	"github.com/ASV44/Hellen-StandUp/hellen/slack"
 	"github.com/ASV44/Hellen-StandUp/hellen/slack/models"
-	"io"
-	"net/http"
 )
 
-func confirmUrl(w http.ResponseWriter, slackData models.Callback) {
-	_, err := io.WriteString(w, slackData.Challenge)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
+type EventsHandler struct {
+	eventsHandlers map[string]func(event models.Event)
 }
 
-func handleEvent(w http.ResponseWriter, slackData models.Callback)  {
-	if slackData.Event.User != "" {
-		slack.SendMessage(slackData.Event.Channel, "Amazing")
+func NewEventsHandler() *EventsHandler {
+	handler := &EventsHandler{}
+	handler.init()
+	return handler
+}
+
+func (handler *EventsHandler) init() {
+	handler.eventsHandlers = make(map[string]func(event models.Event))
+	handler.eventsHandlers[models.Message] = handler.handleMessage
+}
+
+
+func (handler *EventsHandler) ProcessEvent(event models.Event) {
+	handler.eventsHandlers[event.Type](event)
+}
+
+func (handler *EventsHandler) handleMessage(event models.Event)  {
+	if event.User != "" {
+		slack.SendMessage(event.Channel, "Amazing")
 	}
 }

@@ -11,18 +11,11 @@ import (
 )
 
 type RequestHandler struct {
-	eventsHandlers map[string]func(w http.ResponseWriter, event models.Callback)
+	callbackHandler *CallbackHandler
 }
 
 func NewRequestHandler() *RequestHandler {
-	return &RequestHandler{eventsHandlers: initEventHandlers()}
-}
-
-func initEventHandlers() map[string]func(w http.ResponseWriter, event models.Callback) {
-	eventsHandlers := make(map[string]func(w http.ResponseWriter, event models.Callback))
-	eventsHandlers[models.UrlVerification] = confirmUrl
-	eventsHandlers[models.EventCallback] = handleEvent
-	return eventsHandlers
+	return &RequestHandler{callbackHandler: NewCallbackHandler()}
 }
 
 func (handler *RequestHandler) RootHandler(w http.ResponseWriter, r *http.Request) {
@@ -39,5 +32,5 @@ func (handler *RequestHandler) SlackHandler(w http.ResponseWriter, r *http.Reque
 	}
 	data, _ := json.Marshal(slackData)
 	fmt.Println(string(data))
-	handler.eventsHandlers[slackData.Type](w, slackData)
+	handler.callbackHandler.ProcessCallback(w, slackData)
 }

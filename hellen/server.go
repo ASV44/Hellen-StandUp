@@ -42,7 +42,6 @@ func InitServer(host string, port string, router *mux.Router) Server {
 
 func (server *Server) Start() {
 	server.run(server.router)
-	//slack.SendMessage(slack.OpenUserCommunication("UEPGE7U59"), "My message from server")
 }
 
 func (server *Server) run(router *mux.Router) {

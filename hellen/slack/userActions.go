@@ -19,7 +19,7 @@ func OpenUserCommunication(userID string) string {
 		return ""
 	}
 
-	var openChannelResponse models.OpenChannelResponse
+	var openChannelResponse models.OpenChannel
 	_ = json.NewDecoder(response.Body).Decode(&openChannelResponse)
 	id := openChannelResponse.Id()
 	fmt.Println(id)

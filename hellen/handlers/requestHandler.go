@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/ASV44/Hellen-StandUp/hellen"
-	"github.com/ASV44/Hellen-StandUp/hellen/slack"
 	"github.com/ASV44/Hellen-StandUp/hellen/slack/models"
 	"io"
 	"net/http"
@@ -12,11 +11,18 @@ import (
 )
 
 type RequestHandler struct {
-
+	eventsHandlers map[string]func(w http.ResponseWriter, event models.Callback)
 }
 
 func NewRequestHandler() *RequestHandler {
-	return &RequestHandler{}
+	return &RequestHandler{eventsHandlers: initEventHandlers()}
+}
+
+func initEventHandlers() map[string]func(w http.ResponseWriter, event models.Callback) {
+	eventsHandlers := make(map[string]func(w http.ResponseWriter, event models.Callback))
+	eventsHandlers[models.UrlVerification] = confirmUrl
+	eventsHandlers[models.EventCallback] = handleEvent
+	return eventsHandlers
 }
 
 func (handler *RequestHandler) RootHandler(w http.ResponseWriter, r *http.Request) {
@@ -25,7 +31,7 @@ func (handler *RequestHandler) RootHandler(w http.ResponseWriter, r *http.Reques
 }
 
 func (handler *RequestHandler) SlackHandler(w http.ResponseWriter, r *http.Request) {
-	var slackData models.SlackCallback
+	var slackData models.Callback
 	decodeError := json.NewDecoder(r.Body).Decode(&slackData)
 	if decodeError != nil {
 		fmt.Println(decodeError)
@@ -33,9 +39,5 @@ func (handler *RequestHandler) SlackHandler(w http.ResponseWriter, r *http.Reque
 	}
 	data, _ := json.Marshal(slackData)
 	fmt.Println(string(data))
-	if slackData.Type == "url_verification" {
-		_, _ = io.WriteString(w, slackData.Challenge)
-		return
-	}
-	slack.SendMessage(slackData.Event.Channel, "Fucking Amazing")
+	handler.eventsHandlers[slackData.Type](w, slackData)
 }

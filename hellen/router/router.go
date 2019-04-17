@@ -15,4 +15,5 @@ func New(handler *handlers.RequestHandler) *mux.Router {
 func addRoutesHandlers(router *mux.Router, handler *handlers.RequestHandler) {
 	router.HandleFunc("/", handler.RootHandler)
 	router.HandleFunc("/processing", handler.SlackHandler).Methods("POST")
+	router.HandleFunc("/sudo", handler.StandUpOpenDialogHandler).Methods("POST")
 }

@@ -1,6 +1,7 @@
 package slack
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"github.com/ASV44/Hellen-StandUp/hellen/slack/models"
@@ -29,5 +30,14 @@ func OpenUserCommunication(userID string) string {
 func SendMessage(channelID string, message string) {
 	urlString := API + "/chat.postMessage?" + "token=" + os.Getenv("BOT_TOKEN") + "&channel=" + channelID + "&text=" + url.QueryEscape(message)
 	req, _ := http.NewRequest(http.MethodPost, urlString, nil)
+	_, _ = http.DefaultClient.Do(req)
+}
+
+func OpenDialog(openDialog models.OpenDialog) {
+	urlString := API + "/dialog.open"
+	data, _ := json.Marshal(openDialog)
+	req, _ := http.NewRequest(http.MethodPost, urlString, bytes.NewReader(data))
+	req.Header.Add("Content-Type", "application/json")
+	req.Header.Add("Authorization", "Bearer " + os.Getenv("BOT_TOKEN"))
 	_, _ = http.DefaultClient.Do(req)
 }
